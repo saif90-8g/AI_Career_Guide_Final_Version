@@ -1,0 +1,599 @@
+{% extends "base.html" %}
+
+{% block title %}Career Recommendations - AI Career Guide{% endblock %}
+
+{% block content %}
+<!-- Print-only document header with user profile -->
+<div class="print-header d-none">
+    <div class="print-report-title">
+        <h1>AI Career Guide &mdash; Personalized Report</h1>
+        <p class="print-report-subtitle">Generated {{ now.strftime('%B %d, %Y') if now is defined else '' }}</p>
+    </div>
+    <div class="print-profile-summary">
+        <div class="print-profile-grid">
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-user"></i> Full Name</span>
+                <span class="print-profile-value">{{ profile.get('full_name', 'Student') }}</span>
+            </div>
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-graduation-cap"></i> Education</span>
+                <span class="print-profile-value">{{ profile.get('education', 'N/A') }}</span>
+            </div>
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-book"></i> Degree / Field</span>
+                <span class="print-profile-value">{{ profile.get('degree', 'N/A') }}</span>
+            </div>
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-briefcase"></i> Experience</span>
+                <span class="print-profile-value">{{ profile.get('experience', 'N/A') }}</span>
+            </div>
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-industry"></i> Preferred Industry</span>
+                <span class="print-profile-value">{{ profile.get('preferred_industry', 'N/A') }}</span>
+            </div>
+            <div class="print-profile-item">
+                <span class="print-profile-label"><i class="fa-solid fa-bullseye"></i> Career Goal</span>
+                <span class="print-profile-value">{{ profile.get('career_goal', 'N/A') }}</span>
+            </div>
+        </div>
+        <div class="print-profile-skills">
+            <span class="print-profile-label"><i class="fa-solid fa-code"></i> Skills</span>
+            <div class="print-skills-list">
+                {% for skill in profile.get('skills', []) %}
+                    <span class="print-skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container py-5">
+    {% if not results.get('is_matric') and not results.get('is_fsc') %}
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+        <div>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success bg-opacity-10 text-success fw-bold small mb-2">
+                <i class="fa-solid fa-circle-check"></i> Analysis Complete
+            </div>
+            <h1 class="display-6 fw-extrabold text-dark tracking-tight mb-1">Your Career Guidance Dashboard</h1>
+            <p class="text-secondary mb-0">
+                Personalized recommendations and preference analysis prepared for <strong>{{ profile.get('full_name', 'Student') }}</strong>.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('assessment') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                <i class="fa-solid fa-rotate-left me-1"></i> Retake
+            </a>
+            <button class="btn btn-dark rounded-pill px-4 fw-semibold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print
+            </button>
+        </div>
+    </div>
+
+    <!-- Career Interest Profile Breakdown (Section 5 & 8) -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1"><i class="fa-solid fa-chart-pie text-primary me-2"></i>Your Career Preference Profile</h4>
+                        <p class="text-secondary small mb-0">Quantitative representation of your work preferences, motivation styles, and problem-solving orientation.</p>
+                    </div>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill small">
+                        Guidance Representation &bull; Non-diagnostic
+                    </span>
+                </div>
+
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-5">
+                        <div style="height: 300px;" class="position-relative">
+                            <canvas id="resultsRadarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row g-3">
+                            {% set profile_scores = results.get('career_profile', {}) %}
+                            
+                            <!-- Analytical -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-square-root-variable text-info me-2"></i>Analytical</span>
+                                        <span class="text-info">{{ profile_scores.get('analytical', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-info" style="width: {{ profile_scores.get('analytical', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Logic, numbers, and data investigation</small>
+                                </div>
+                            </div>
+
+                            <!-- Technical -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-microchip text-primary me-2"></i>Technical</span>
+                                        <span class="text-primary">{{ profile_scores.get('technical', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-primary" style="width: {{ profile_scores.get('technical', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Coding, engineering, and software systems</small>
+                                </div>
+                            </div>
+
+                            <!-- Research -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-book-open-reader text-success me-2"></i>Research</span>
+                                        <span class="text-success">{{ profile_scores.get('research', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-success" style="width: {{ profile_scores.get('research', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Deep inquiries and discovering knowledge</small>
+                                </div>
+                            </div>
+
+                            <!-- Leadership -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-people-roof text-warning me-2"></i>Leadership</span>
+                                        <span class="text-warning">{{ profile_scores.get('leadership', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-warning" style="width: {{ profile_scores.get('leadership', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Vision, project ownership, and team direction</small>
+                                </div>
+                            </div>
+
+                            <!-- Creative -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-palette text-danger me-2"></i>Creative</span>
+                                        <span class="text-danger">{{ profile_scores.get('creative', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-danger" style="width: {{ profile_scores.get('creative', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Novel concepts and user experience design</small>
+                                </div>
+                            </div>
+
+                            <!-- Social -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-handshake-angle text-primary me-2"></i>Social</span>
+                                        <span class="text-primary">{{ profile_scores.get('social', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-primary bg-opacity-75" style="width: {{ profile_scores.get('social', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Collaboration, mentoring, and interpersonal skills</small>
+                                </div>
+                            </div>
+
+                            <!-- Practical -->
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3 bg-light border">
+                                    <div class="d-flex justify-content-between text-dark fw-bold small mb-1">
+                                        <span><i class="fa-solid fa-wrench text-secondary me-2"></i>Practical</span>
+                                        <span class="text-secondary">{{ profile_scores.get('practical', 0) }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 7px;">
+                                        <div class="progress-bar bg-secondary" style="width: {{ profile_scores.get('practical', 0) }}%"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block" style="font-size: 0.75rem;">Hands-on execution and concrete deliverables</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Careers (Section 8) -->
+    <div class="mb-4">
+        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">AI Matches</span>
+        <h3 class="fw-bold text-dark tracking-tight mb-2">Recommended Career Paths</h3>
+        <p class="text-secondary">Based on holistic evaluation of your education, skills, interests, and preference scores:</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for rec in results.get('recommendations', []) %}
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 career-match-card position-relative bg-white">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="career-card-icon-box">
+                            <i class="fa-solid fa-briefcase fa-lg text-primary"></i>
+                        </div>
+                        <div>
+                            <span class="text-secondary small fw-bold text-uppercase">Career Match #{{ loop.index }}</span>
+                            <h4 class="fw-bold text-dark mb-0">{{ rec.career }}</h4>
+                        </div>
+                    </div>
+                    <div class="match-badge-pill">
+                        <span class="badge {% if rec.match_percentage >= 90 %}bg-success{% elif rec.match_percentage >= 80 %}bg-primary{% else %}bg-info{% endif %} fs-6 px-3 py-2 rounded-pill shadow-sm">
+                            <i class="fa-solid fa-sparkles me-1"></i> {{ rec.match_percentage }}% Match
+                        </span>
+                    </div>
+                </div>
+
+                <p class="text-secondary small mb-3">
+                    {{ rec.reason }}
+                </p>
+
+                <!-- Skill Alignment Snapshot -->
+                <div class="p-3 rounded-3 bg-light mb-4 border overflow-hidden">
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <span class="d-block small fw-bold text-success mb-1"><i class="fa-solid fa-circle-check me-1"></i> You Already Have:</span>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for skill in rec.get('existing_skills', [])[:3] %}
+                                    <span class="badge bg-white text-dark border small">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="d-block small fw-bold text-primary mb-1"><i class="fa-solid fa-circle-arrow-up me-1"></i> Skills to Develop:</span>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for skill in rec.get('missing_skills', [])[:3] %}
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 small">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+                    <span class="text-secondary small"><i class="fa-solid fa-timeline text-primary me-1"></i> 5-Month Guided Roadmap</span>
+                    <a href="{{ url_for('career_detail', career_id=rec.id) }}" class="btn btn-primary btn-glow rounded-pill px-4 fw-bold">
+                        Explore Career & Skill Gap <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif results.get('is_fsc') %}
+    <!-- FSc Student Degree Guidance Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+        <div>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success bg-opacity-10 text-success fw-bold small mb-2">
+                <i class="fa-solid fa-user-graduate"></i> Degree Guidance
+            </div>
+            <h1 class="display-6 fw-extrabold text-dark tracking-tight mb-1">Your Recommended Degree Program</h1>
+            <p class="text-secondary mb-0">
+                Personalized guidance for <strong>{{ profile.get('full_name', 'Student') }}</strong> after FSc / Intermediate.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('assessment') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                <i class="fa-solid fa-rotate-left me-1"></i> Retake
+            </a>
+            <button class="btn btn-dark rounded-pill px-4 fw-semibold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print
+            </button>
+        </div>
+    </div>
+
+    <!-- FSc Student Profile Summary -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="mb-4">
+            <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-1 rounded-pill mb-1">Student Profile</span>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-id-card text-secondary me-2"></i>FSc / Intermediate Profile Summary</h3>
+            <p class="text-secondary small mb-0">A quick look at your intermediate profile.</p>
+        </div>
+        <div class="row g-3 text-secondary">
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Name</strong>{{ profile.get('full_name', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">College</strong>{{ profile.get('college', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">FSc Group</strong>{{ profile.get('fsc_group', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Marks / Percentage</strong>{{ profile.get('percentage', '-') }}{% if profile.get('percentage') %}%{% endif %}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Favourite Subject</strong>{{ profile.get('favourite_subject', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Strongest Subject</strong>{{ profile.get('strongest_subject', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Interests</strong>{{ profile.get('interests_hobbies', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Career Goal</strong>{{ profile.get('career_goal', '-') or profile.get('aim_in_life', '-') }}</div>
+        </div>
+    </div>
+
+    <!-- Degree Path Analysis -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="mb-3">
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">Degree Path Analysis</span>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-magnifying-glass-chart text-primary me-2"></i>Degree Path Analysis</h3>
+        </div>
+        <p class="lead text-secondary fs-6 mb-0">
+            Based on your FSc group, marks, favourite and strongest subjects, interests, career goal, and assessment answers, the most suitable degree program for you is
+            <strong class="text-primary">{{ results.recommended_path.title }}</strong>.
+        </p>
+    </div>
+
+    <!-- Recommended Degree Program -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-2">Recommended Degree Program</span>
+                <h2 class="fw-bold text-dark mb-2">{{ results.recommended_path.title }}</h2>
+                <p class="lead text-secondary fs-6 mb-0">
+                    {{ results.recommended_path.reason }}
+                </p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="match-circle-card p-4 rounded-4 bg-light border">
+                    <i class="fa-solid fa-user-graduate fa-2x text-primary mb-2"></i>
+                    <div class="display-5 fw-extrabold text-primary mb-1">Best Fit</div>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-1 rounded-pill">
+                        For FSc Students
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Suitable Degree Options -->
+    <div class="mb-4">
+        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">Alternatives</span>
+        <h3 class="fw-bold text-dark tracking-tight mb-2">Other Suitable Degree Options</h3>
+        <p class="text-secondary">These degree programs could also work well based on your profile and marks.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for option in results.get('other_options', []) %}
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="career-card-icon-box">
+                        <i class="fa-solid fa-graduation-cap fa-lg text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">{{ option.title }}</h5>
+                </div>
+                <p class="text-secondary small mb-0">{{ option.reason }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Future Career Options -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-1 rounded-pill mb-1">Future Outlook</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-briefcase text-success me-2"></i>Future Career Options</h3>
+                <p class="text-secondary small mb-0">Careers you could pursue after completing the recommended degree.</p>
+            </div>
+        </div>
+        <div class="row g-3">
+            {% for career in results.get('future_careers', []) %}
+            <div class="col-md-6">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-star text-warning me-2"></i>{{ career.title }}</h6>
+                    <p class="text-secondary small mb-0">{{ career.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Suggested Education Roadmap -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-info bg-opacity-10 text-info fw-bold px-3 py-1 rounded-pill mb-1">Education Roadmap</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-map-location-dot text-info me-2"></i>Suggested Education Roadmap</h3>
+                <p class="text-secondary small mb-0">A step-by-step path from FSc to your future career.</p>
+            </div>
+        </div>
+        <div class="roadmap-timeline">
+            {% for step in results.get('roadmap', []) %}
+            <div class="roadmap-card p-4 rounded-4 border bg-light bg-opacity-50 mb-3 shadow-sm position-relative">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="roadmap-step-number">{{ loop.index }}</div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">{{ step }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <!-- Matric Student Guidance Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+        <div>
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success bg-opacity-10 text-success fw-bold small mb-2">
+                <i class="fa-solid fa-graduation-cap"></i> Study Path Guidance
+            </div>
+            <h1 class="display-6 fw-extrabold text-dark tracking-tight mb-1">Your Recommended Intermediate Path</h1>
+            <p class="text-secondary mb-0">
+                Personalized guidance for <strong>{{ profile.get('full_name', 'Student') }}</strong> after Matric.
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('assessment') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                <i class="fa-solid fa-rotate-left me-1"></i> Retake
+            </a>
+            <button class="btn btn-dark rounded-pill px-4 fw-semibold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print
+            </button>
+        </div>
+    </div>
+
+    <!-- Student Profile Summary -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="mb-4">
+            <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-1 rounded-pill mb-1">Student Profile</span>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-id-card text-secondary me-2"></i>Student Profile Summary</h3>
+            <p class="text-secondary small mb-0">A quick look at your Matric profile.</p>
+        </div>
+        <div class="row g-3 text-secondary">
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Name</strong>{{ profile.get('full_name', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Matric Group</strong>{{ profile.get('matric_group', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Marks / Percentage</strong>{{ profile.get('percentage', '-') }}%</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Favourite Subject</strong>{{ profile.get('favourite_subject', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Strongest Subject</strong>{{ profile.get('strongest_subject', '-') }}</div>
+            <div class="col-sm-6 col-md-4"><strong class="d-block text-dark small">Interests</strong>{{ profile.get('interests_hobbies', '-') }}</div>
+        </div>
+    </div>
+
+    <!-- Education Path Analysis -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="mb-3">
+            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">Education Path Analysis</span>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-magnifying-glass-chart text-primary me-2"></i>Education Path Analysis</h3>
+        </div>
+        <p class="lead text-secondary fs-6 mb-0">
+            Based on your subjects, marks, favourite and strongest subjects, and interests, the most suitable next step after Matric is
+            <strong class="text-primary">{{ results.recommended_path.title }}</strong>.
+        </p>
+    </div>
+
+    <!-- Recommended Intermediate Path -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-2">Recommended Intermediate Path</span>
+                <h2 class="fw-bold text-dark mb-2">{{ results.recommended_path.title }}</h2>
+                <p class="lead text-secondary fs-6 mb-0">
+                    {{ results.recommended_path.reason }}
+                </p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="match-circle-card p-4 rounded-4 bg-light border">
+                    <i class="fa-solid fa-graduation-cap fa-2x text-primary mb-2"></i>
+                    <div class="display-5 fw-extrabold text-primary mb-1">Best Fit</div>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-1 rounded-pill">
+                        For Matric Students
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Suitable Options -->
+    <div class="mb-4">
+        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">Alternatives</span>
+        <h3 class="fw-bold text-dark tracking-tight mb-2">Other Suitable Study Options</h3>
+        <p class="text-secondary">These paths could also work well based on your interests and marks.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for option in results.get('other_options', []) %}
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="career-card-icon-box">
+                        <i class="fa-solid fa-book-open fa-lg text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0">{{ option.title }}</h5>
+                </div>
+                <p class="text-secondary small mb-0">{{ option.reason }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Future Career Options -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-1 rounded-pill mb-1">Future Outlook</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-briefcase text-success me-2"></i>Future Career Options</h3>
+                <p class="text-secondary small mb-0">Careers you could pursue after completing the recommended education path.</p>
+            </div>
+        </div>
+        <div class="row g-3">
+            {% for career in results.get('future_careers', []) %}
+            <div class="col-md-6">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-star text-warning me-2"></i>{{ career.title }}</h6>
+                    <p class="text-secondary small mb-0">{{ career.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Suggested Education Roadmap -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-info bg-opacity-10 text-info fw-bold px-3 py-1 rounded-pill mb-1">Education Roadmap</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-map-location-dot text-info me-2"></i>Suggested Education Roadmap</h3>
+                <p class="text-secondary small mb-0">A simple step-by-step path from where you are now to your future career.</p>
+            </div>
+        </div>
+        <div class="roadmap-timeline">
+            {% for step in results.get('roadmap', []) %}
+            <div class="roadmap-card p-4 rounded-4 border bg-light bg-opacity-50 mb-3 shadow-sm position-relative">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="roadmap-step-number">{{ loop.index }}</div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">{{ step }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const radarCtx = document.getElementById("resultsRadarChart");
+    if (radarCtx) {
+        const scores = {{ results.get('career_profile', {}) | tojson }};
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Analytical', 'Technical', 'Creative', 'Social', 'Leadership', 'Research', 'Practical'],
+                datasets: [{
+                    label: 'Preference Profile (%)',
+                    data: [
+                        scores.analytical ?? 0,
+                        scores.technical ?? 0,
+                        scores.creative ?? 0,
+                        scores.social ?? 0,
+                        scores.leadership ?? 0,
+                        scores.research ?? 0,
+                        scores.practical ?? 0
+                    ],
+                    fill: true,
+                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                    borderColor: 'rgb(79, 70, 229)',
+                    pointBackgroundColor: 'rgb(79, 70, 229)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(79, 70, 229)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0, 0, 0, 0.08)' },
+                        grid: { color: 'rgba(0, 0, 0, 0.08)' },
+                        suggestedMin: 20,
+                        suggestedMax: 100,
+                        ticks: { stepSize: 20, backdropColor: 'transparent', font: { size: 10 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

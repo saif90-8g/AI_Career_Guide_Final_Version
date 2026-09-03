@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}AI Career Guide - Discover Your Strengths. Explore Your Career. Build Your Roadmap.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white py-5 position-relative overflow-hidden d-flex align-items-center" style="min-height: 85vh;">
+    <div class="hero-bg-glow"></div>
+    <div class="container position-relative z-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-10 border border-white border-opacity-20 mb-4">
+                    <span class="badge bg-primary rounded-pill px-2 py-1">AI-Powered</span>
+                    <span class="small text-light">Powered by Google Gemini</span>
+                </div>
+                <h1 class="display-3 fw-extrabold tracking-tight mb-4">
+                    Your Career Path,<br>
+                    <span class="text-gradient">Guided by AI</span>
+                </h1>
+                <p class="lead text-light text-opacity-75 mb-5 mx-auto" style="max-width: 600px;">
+                    Discover your strengths, explore personalized career matches, and get a step-by-step roadmap — all in 3 minutes.
+                </p>
+                <a href="{{ url_for('assessment') }}" class="btn btn-primary btn-lg btn-glow rounded-pill px-5 py-3 fw-bold fs-5 d-inline-flex align-items-center gap-2 mb-5">
+                    <i class="fa-solid fa-rocket"></i> Start Free Assessment
+                </a>
+                <div class="d-flex justify-content-center align-items-center gap-4 text-white-50 small pt-2 flex-wrap">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-bolt text-warning"></i> Instant AI Results
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-success"></i> Student Friendly
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-primary"></i> 100% Private
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works — Compact Strip -->
+<section id="how-it-works" class="py-5" style="background: var(--surface);">
+    <div class="container py-lg-4">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold tracking-tight text-dark">How It Works</h2>
+            <p class="text-secondary fs-6 mb-0">Four simple steps to your personalized career roadmap</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="feature-icon-wrapper bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                        <i class="fa-solid fa-user fa-xl"></i>
+                    </div>
+                    <span class="step-badge">Step 1</span>
+                    <h5 class="fw-bold text-dark mt-2 mb-2">Your Profile</h5>
+                    <p class="text-secondary small mb-0">Tell us about your education, skills, and career goals.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="feature-icon-wrapper bg-info bg-opacity-10 text-info mx-auto mb-3">
+                        <i class="fa-solid fa-brain fa-xl"></i>
+                    </div>
+                    <span class="step-badge">Step 2</span>
+                    <h5 class="fw-bold text-dark mt-2 mb-2">AI Assessment</h5>
+                    <p class="text-secondary small mb-0">Answer 10 adaptive questions about your work preferences.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="feature-icon-wrapper bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                        <i class="fa-solid fa-chart-pie fa-xl"></i>
+                    </div>
+                    <span class="step-badge">Step 3</span>
+                    <h5 class="fw-bold text-dark mt-2 mb-2">Career Match</h5>
+                    <p class="text-secondary small mb-0">Get 3-4 AI-matched careers with skill gap analysis.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 feature-card border-0 shadow-sm rounded-4 p-4 text-center">
+                    <div class="feature-icon-wrapper bg-success bg-opacity-10 text-success mx-auto mb-3">
+                        <i class="fa-solid fa-map-location-dot fa-xl"></i>
+                    </div>
+                    <span class="step-badge">Step 4</span>
+                    <h5 class="fw-bold text-dark mt-2 mb-2">Your Roadmap</h5>
+                    <p class="text-secondary small mb-0">Receive a personalized 5-month learning plan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 text-white text-center position-relative overflow-hidden" style="background: var(--surface-2);">
+    <div class="container py-lg-4">
+        <div class="max-w-700 mx-auto">
+            <h2 class="display-6 fw-bold mb-3">Ready to discover your path?</h2>
+            <p class="text-secondary lead mb-4">
+                Take the 3-minute assessment and unlock your personalized career roadmap.
+            </p>
+            <a href="{{ url_for('assessment') }}" class="btn btn-primary btn-lg btn-glow rounded-pill px-5 py-3 fw-bold">
+                <i class="fa-solid fa-sparkles me-2"></i> Start Free Assessment
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}{{ career.career }} - Skill Gap & Roadmap | AI Career Guide{% endblock %}
+
+{% block content %}
+<!-- Print-only document header -->
+<div class="print-header d-none">
+    <h1 style="font-size:22pt;font-weight:800;margin-bottom:2px;">AI Career Guide &mdash; Career Skill Gap &amp; Roadmap Report</h1>
+    <p style="font-size:10pt;color:#555;margin-bottom:0;">Career Pathway: <strong>{{ career.career }}</strong></p>
+    <hr style="border:1.5px solid #10b981;margin-top:8px;">
+</div>
+<div class="container py-5">
+    <!-- Breadcrumb and Top Navigation -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none text-secondary">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('results') }}" class="text-decoration-none text-secondary">Results</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ career.career }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('results') }}" class="btn btn-outline-secondary rounded-pill px-4 btn-sm fw-semibold">
+                <i class="fa-solid fa-arrow-left me-1"></i> All Matches
+            </a>
+            <button class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-semibold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print Roadmap
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Career Header Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary bg-opacity-10 text-primary fw-bold small mb-2">
+                    <i class="fa-solid fa-compass"></i> Career Pathway Deep Dive
+                </div>
+                <h1 class="display-6 fw-extrabold text-dark tracking-tight mb-2">{{ career.career }}</h1>
+                <p class="lead text-secondary fs-6 mb-4">
+                    {{ career.overview }}
+                </p>
+                <div class="p-3 rounded-3 bg-light border-start border-4 border-primary">
+                    <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Why this matches you:</h6>
+                    <p class="text-secondary small mb-0">{{ career.reason }}</p>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="match-circle-card p-4 rounded-4 bg-light border">
+                    <span class="text-secondary small fw-bold text-uppercase d-block mb-1">Career Compatibility</span>
+                    <div class="display-4 fw-extrabold text-primary mb-1">{{ career.match_percentage }}%</div>
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-1 rounded-pill">
+                        <i class="fa-solid fa-sparkles me-1"></i> High Aptitude Fit
+                    </span>
+                    <p class="text-secondary small mt-3 mb-0">Calculated from profile skills, goals, & preference scores</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Gap Analysis Section (Section 10) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5" id="skillGapSection">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-warning bg-opacity-10 text-warning fw-bold px-3 py-1 rounded-pill mb-1">Core Requirement</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-code-compare text-warning me-2"></i>Skill Gap Analysis</h3>
+                <p class="text-secondary small mb-0">Comparing your current validated skills against the target industry standard requirements for {{ career.career }}.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                {% set existing_count = career.get('existing_skills', []) | length %}
+                {% set missing_count = career.get('missing_skills', []) | length %}
+                {% set total_count = existing_count + missing_count %}
+                {% set readiness = (existing_count / total_count * 100) | round | int if total_count > 0 else 50 %}
+                <span class="badge bg-primary px-3 py-2 rounded-pill fs-6">
+                    <i class="fa-solid fa-gauge-high me-1"></i> Skill Readiness: {{ readiness }}%
+                </span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left Column: You already have -->
+            <div class="col-lg-6">
+                <div class="h-100 p-4 rounded-4 border bg-success bg-opacity-10 border-success border-opacity-25">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="icon-circle bg-success text-white">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-success mb-0">You Already Have</h5>
+                            <span class="text-secondary small">Validated skills matching this role</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mt-3">
+                        {% for skill in career.get('existing_skills', []) %}
+                        <div class="p-3 rounded-3 bg-white border border-success border-opacity-25 d-flex align-items-center justify-content-between shadow-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                <span class="fw-semibold text-dark">{{ skill }}</span>
+                            </div>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">Ready</span>
+                        </div>
+                        {% else %}
+                        <div class="text-secondary small">No exact skill matches detected yet. Use the roadmap below to start building foundations!</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Skills to develop -->
+            <div class="col-lg-6">
+                <div class="h-100 p-4 rounded-4 border bg-primary bg-opacity-10 border-primary border-opacity-25">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="icon-circle bg-primary text-white">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-primary mb-0">Skills to Develop</h5>
+                            <span class="text-secondary small">Key technical proficiencies to master</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mt-3">
+                        {% for skill in career.get('missing_skills', []) %}
+                        <div class="p-3 rounded-3 bg-white border border-primary border-opacity-25 d-flex align-items-center justify-content-between shadow-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-regular fa-circle-dot text-primary fs-5"></i>
+                                <span class="fw-semibold text-dark">{{ skill }}</span>
+                            </div>
+                            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1">Priority Focus</span>
+                        </div>
+                        {% else %}
+                        <div class="text-secondary small">You have completed all prerequisite skills!</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personalized Career Roadmap (Section 11) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-5" id="roadmapSection">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-1 rounded-pill mb-1">Execution Plan</span>
+                <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-map-location-dot text-success me-2"></i>Personalized 5-Month Career Roadmap</h3>
+                <p class="text-secondary small mb-0">A structured curriculum bridging your current skill baseline to industry job readiness.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill small">
+                    <i class="fa-regular fa-clock me-1"></i> ~8-12 hrs / week recommended
+                </span>
+            </div>
+        </div>
+
+        <!-- Vertical Timeline Roadmap Cards -->
+        <div class="roadmap-timeline">
+            {% for step in career.get('roadmap', []) %}
+            <div class="roadmap-card p-4 rounded-4 border bg-light bg-opacity-50 mb-4 shadow-sm position-relative">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="roadmap-step-number bg-primary text-white fw-bold">
+                            M{{ loop.index }}
+                        </div>
+                        <div>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold text-uppercase small">{{ step.title or ("Month " ~ loop.index) }}</span>
+                            <h5 class="fw-bold text-dark mb-0">{{ step.topic }}</h5>
+                        </div>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill small">Milestone #{{ loop.index }}</span>
+                </div>
+
+                <div class="row g-3 mt-1">
+                    <!-- What to Learn -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-white border h-100">
+                            <span class="d-block small fw-bold text-primary mb-1"><i class="fa-solid fa-book-bookmark me-1"></i> What to Learn:</span>
+                            <p class="text-secondary small mb-0">{{ step.what_to_learn }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Suggested Project -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-white border h-100">
+                            <span class="d-block small fw-bold text-success mb-1"><i class="fa-solid fa-laptop-code me-1"></i> Suggested Project:</span>
+                            <p class="text-secondary small mb-0">{{ step.suggested_project }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Expected Outcome -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-white border h-100">
+                            <span class="d-block small fw-bold text-info mb-1"><i class="fa-solid fa-flag-checkered me-1"></i> Expected Outcome:</span>
+                            <p class="text-secondary small mb-0">{{ step.expected_outcome }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Career Role Deep Dive: Responsibilities & Learning Areas -->
+    <div class="row g-4 mb-5">
+        <!-- Typical Responsibilities -->
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check text-primary me-2"></i>Typical Daily Responsibilities</h5>
+                <ul class="list-group list-group-flush">
+                    {% for resp in career.get('responsibilities', []) %}
+                    <li class="list-group-item px-0 py-2 border-0 d-flex align-items-start gap-2 text-secondary small">
+                        <i class="fa-solid fa-circle-chevron-right text-primary mt-1"></i>
+                        <span>{{ resp }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recommended Learning Areas & Suggested Projects -->
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Suggested Portfolio Projects</h5>
+                <ul class="list-group list-group-flush">
+                    {% for proj in career.get('suggested_projects', []) %}
+                    <li class="list-group-item px-0 py-2 border-0 d-flex align-items-start gap-2 text-secondary small">
+                        <i class="fa-solid fa-diagram-project text-success mt-1"></i>
+                        <span>{{ proj }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore Other Careers Drawer -->
+    <div class="p-4 rounded-4 bg-dark text-white border border-white border-opacity-10 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <h5 class="fw-bold mb-1">Explore More Recommended Career Tracks</h5>
+            <p class="text-secondary small mb-0">Switch between your AI-matched careers to compare required skill gaps and roadmaps.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            {% for other in all_careers %}
+                {% if other.id != career.id %}
+                <a href="{{ url_for('career_detail', career_id=other.id) }}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    {{ other.career }} ({{ other.match_percentage }}%)
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

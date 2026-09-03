@@ -1,0 +1,776 @@
+{% extends "base.html" %}
+
+{% block title %}Career Assessment - AI Career Guide{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Top Progress Header -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                <div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-1">Career Assessment</span>
+                    <h2 class="fw-extrabold text-dark tracking-tight mb-0" id="stepHeading">Step 1 — Education Level</h2>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-dark text-white px-3 py-2 rounded-pill fs-6" id="stepCounterBadge">Step 1 of 4</span>
+                </div>
+            </div>
+
+            <!-- Stepper Progress Bar -->
+            <div class="position-relative mb-4">
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary transition-all" id="stepperProgressBar" style="width: 25%;"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-2 text-secondary small fw-semibold">
+                    <span id="stepLabel1" class="text-primary"><i class="fa-solid fa-graduation-cap me-1"></i> 1. Education</span>
+                    <span id="stepLabel2"><i class="fa-solid fa-circle-user me-1"></i> 2. Profile</span>
+                    <span id="stepLabel3"><i class="fa-solid fa-list-check me-1"></i> 3. Interests</span>
+                    <span id="stepLabel4"><i class="fa-solid fa-chart-simple me-1"></i> 4. Review</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Step Form Container -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                <div class="card-body p-4 p-md-5">
+                    
+                    <form id="assessmentForm" novalidate onsubmit="return false;">
+                        
+                        <!-- ================= STEP 0: EDUCATION GUIDANCE LEVEL ================= -->
+                        <div id="step0Container" class="form-step-section">
+                            <div class="mb-4 text-center">
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-1 rounded-pill mb-2">Getting Started</span>
+                                <h4 class="fw-bold text-dark mb-1">What is your current education level?</h4>
+                                <p class="text-secondary small mb-0">Select your highest level of education so we can tailor the right profile questions for you.</p>
+                            </div>
+
+                            <div class="row g-4 justify-content-center mb-4">
+                                <!-- Matric -->
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-0 rounded-4 p-4 text-center education-card" data-level="Matric" onclick="selectEducation('Matric')">
+                                        <div class="education-card-icon bg-success bg-opacity-10 mx-auto mb-3">
+                                            <i class="fa-solid fa-school fa-2x text-success"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-dark mb-1">Matric</h5>
+                                        <p class="text-secondary small mb-0">I am currently studying in school or have completed Matric / O-Levels / SSC</p>
+                                    </div>
+                                </div>
+                                <!-- FSc / Intermediate -->
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-0 rounded-4 p-4 text-center education-card" data-level="FSc / Intermediate" onclick="selectEducation('FSc / Intermediate')">
+                                        <div class="education-card-icon bg-primary bg-opacity-10 mx-auto mb-3">
+                                            <i class="fa-solid fa-book-open fa-2x text-primary"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-dark mb-1">FSc / Intermediate</h5>
+                                        <p class="text-secondary small mb-0">I have completed or am currently studying FSc / Intermediate / A-Levels / HSSC</p>
+                                    </div>
+                                </div>
+                                <!-- Bachelor's & Above -->
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-0 rounded-4 p-4 text-center education-card" data-level="Bachelors" onclick="selectEducation('Bachelors')">
+                                        <div class="education-card-icon bg-warning bg-opacity-10 mx-auto mb-3">
+                                            <i class="fa-solid fa-graduation-cap fa-2x text-warning"></i>
+                                        </div>
+                                        <h5 class="fw-bold text-dark mb-1">Bachelor's & Above</h5>
+                                        <p class="text-secondary small mb-0">I am pursuing or have completed a Bachelor's degree, Master's, or higher qualification</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="eduSelectionMsg" class="text-danger small text-center d-none">Please select a guidance level to continue.</div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" onclick="goToStep(1)">
+                                    Next: Profile Details <i class="fa-solid fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ================= STEP 1: PROFILE DETAILS ================= -->
+                        <div id="step1Container" class="form-step-section d-none">
+                            <div class="mb-4">
+                                <h4 class="fw-bold text-dark mb-1">Tell Us About Yourself</h4>
+                                <p class="text-secondary small">Provide your details so the AI can tailor recommendations to your background and guidance level.</p>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Full Name (always) -->
+                                <div class="col-md-6">
+                                    <label for="fullName" class="form-label fw-semibold text-dark">Full Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-user text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="fullName" name="fullName" placeholder="e.g. Your Name" required>
+                                    </div>
+                                    <div class="invalid-feedback">Please provide your full name.</div>
+                                </div>
+
+                                <!-- Age Range (always) -->
+                                <div class="col-md-6">
+                                    <label for="ageRange" class="form-label fw-semibold text-dark">Age Range <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="ageRange" name="ageRange" required>
+                                        <option value="" disabled selected>Select age range...</option>
+                                        <option value="Under 18">Under 18</option>
+                                        <option value="18-24">18–24 (Student / Early-career)</option>
+                                        <option value="25-34">25–34 (Young Professional)</option>
+                                        <option value="35-44">35–44 (Career Transition)</option>
+                                        <option value="45+">45+</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your age range.</div>
+                                </div>
+
+                                <!-- Matric path: Gender -->
+                                <div class="col-md-6 edu-matric-field d-none">
+                                    <label for="matricGender" class="form-label fw-semibold text-dark">Gender <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="matricGender" name="matricGender">
+                                        <option value="" disabled selected>Select gender...</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your gender.</div>
+                                </div>
+
+                                <!-- Matric path: School Name -->
+                                <div class="col-md-6 edu-matric-field d-none">
+                                    <label for="matricSchool" class="form-label fw-semibold text-dark">School Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-school text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="matricSchool" name="matricSchool" placeholder="e.g. Government High School">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter your school name.</div>
+                                </div>
+
+                                <!-- Matric path: Overall Percentage -->
+                                <div class="col-md-6 edu-matric-field d-none">
+                                    <label for="matricPercentage" class="form-label fw-semibold text-dark">Overall Percentage <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-percent text-secondary"></i></span>
+                                        <input type="number" class="form-control border-start-0 ps-0" id="matricPercentage" name="matricPercentage" placeholder="e.g. 85" min="0" max="100" step="0.1">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter your overall percentage (0-100).</div>
+                                </div>
+
+                                <!-- Matric path: Marks Header -->
+                                <div class="col-12 edu-matric-field d-none">
+                                    <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-chart-column text-primary me-2"></i>Subject-wise Percentage of Marks (Major Subjects)</h6>
+                                </div>
+
+                                <!-- Matric path: Physics Marks -->
+                                <div class="col-md-3 edu-matric-field d-none">
+                                    <label for="matricPhysics" class="form-label fw-semibold text-dark">Physics (%) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="matricPhysics" name="matricPhysics" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- Matric path: Chemistry Marks -->
+                                <div class="col-md-3 edu-matric-field d-none">
+                                    <label for="matricChemistry" class="form-label fw-semibold text-dark">Chemistry (%) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="matricChemistry" name="matricChemistry" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- Matric path: Maths Marks -->
+                                <div class="col-md-3 edu-matric-field d-none">
+                                    <label for="matricMaths" class="form-label fw-semibold text-dark">Maths (%) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="matricMaths" name="matricMaths" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- Matric path: CompSci/Bio Marks -->
+                                <div class="col-md-3 edu-matric-field d-none">
+                                    <label for="matricOptionalSubject" class="form-label fw-semibold text-dark">CompSci / Biology (%) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="matricOptionalSubject" name="matricOptionalSubject" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- Matric path: Favourite Subject -->
+                                <div class="col-md-4 edu-matric-field d-none">
+                                    <label for="matricFavSubject" class="form-label fw-semibold text-dark">Favourite Subject <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="matricFavSubject" name="matricFavSubject">
+                                        <option value="" disabled selected>Select favourite subject...</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Maths">Maths</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                        <option value="Urdu">Urdu</option>
+                                        <option value="Islamiat">Islamiat</option>
+                                        <option value="Pak Studies">Pak Studies</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select.</div>
+                                </div>
+
+                                <!-- Matric path: Least Favourite Subject -->
+                                <div class="col-md-4 edu-matric-field d-none">
+                                    <label for="matricLeastFavSubject" class="form-label fw-semibold text-dark">Least Favourite Subject <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="matricLeastFavSubject" name="matricLeastFavSubject">
+                                        <option value="" disabled selected>Select least favourite...</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Maths">Maths</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                        <option value="Urdu">Urdu</option>
+                                        <option value="Islamiat">Islamiat</option>
+                                        <option value="Pak Studies">Pak Studies</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select.</div>
+                                </div>
+
+                                <!-- Matric path: Matric Group -->
+                                <div class="col-md-6 edu-matric-field d-none">
+                                    <label for="matricGroup" class="form-label fw-semibold text-dark">Matric Group / Stream <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="matricGroup" name="matricGroup">
+                                        <option value="" disabled selected>Select your matric group...</option>
+                                        <option value="Science">Science (Physics, Chemistry, Maths, Biology/Computer)</option>
+                                        <option value="Arts">Arts / Humanities</option>
+                                        <option value="General Science">General Science</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your matric group.</div>
+                                </div>
+
+                                <!-- Matric path: Strongest Subject -->
+                                <div class="col-md-6 edu-matric-field d-none">
+                                    <label for="matricStrongestSubject" class="form-label fw-semibold text-dark">Strongest Subject <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="matricStrongestSubject" name="matricStrongestSubject">
+                                        <option value="" disabled selected>Select your strongest subject...</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Maths">Maths</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                        <option value="Urdu">Urdu</option>
+                                        <option value="Islamiat">Islamiat</option>
+                                        <option value="Pak Studies">Pak Studies</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your strongest subject.</div>
+                                </div>
+
+                                <!-- Matric path: Subjects You Enjoy -->
+                                <div class="col-12 edu-matric-field d-none">
+                                    <label for="matricSubjectsEnjoy" class="form-label fw-semibold text-dark">Subjects You Enjoy <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-heart text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="matricSubjectsEnjoy" name="matricSubjectsEnjoy" placeholder="e.g. Maths, Computer Science, English">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter the subjects you enjoy.</div>
+                                </div>
+
+                                <!-- Matric path: Interests / Hobbies -->
+                                <div class="col-12 edu-matric-field d-none">
+                                    <label for="matricInterests" class="form-label fw-semibold text-dark">Your Interests / Hobbies <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lightbulb text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="matricInterests" name="matricInterests" placeholder="e.g. Coding, drawing, helping others, solving puzzles, reading science">
+                                    </div>
+                                    <div class="invalid-feedback">Please share your interests or hobbies.</div>
+                                </div>
+
+                                <!-- Matric path: Type of Work You Like -->
+                                <div class="col-12 edu-matric-field d-none">
+                                    <label class="form-label fw-semibold text-dark">What type of work do you like? <span class="text-danger">*</span></label>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Computers and technology" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-laptop-code text-primary me-2"></i>Computers and technology</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Engineering and machines" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-gears text-secondary me-2"></i>Engineering and machines</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Medicine and biology" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-heart-pulse text-danger me-2"></i>Medicine and biology</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Business" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-chart-line text-success me-2"></i>Business</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Arts and creativity" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-palette text-warning me-2"></i>Arts and creativity</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="matricWorkType" value="Teaching and helping people" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-hand-holding-heart text-info me-2"></i>Teaching and helping people</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div id="matricWorkTypeValidationMsg" class="text-danger small mt-1 d-none">Please select at least one type of work.</div>
+                                </div>
+
+                                <!-- Matric path: Aim in Life -->
+                                <div class="col-12 edu-matric-field d-none">
+                                    <label for="matricAimInLife" class="form-label fw-semibold text-dark">Aim in Life <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-star text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="matricAimInLife" name="matricAimInLife" placeholder="e.g. Become a software engineer, Doctor, Start my own business, Serve the community">
+                                    </div>
+                                    <div class="invalid-feedback">Please describe your aim in life.</div>
+                                </div>
+
+                                <!-- FSc path: College Name -->
+                                <div class="col-md-6 edu-fsc-field d-none">
+                                    <label for="fscCollege" class="form-label fw-semibold text-dark">College Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-building-columns text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="fscCollege" name="fscCollege" placeholder="e.g. Government College, Punjab Group College">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter your college name.</div>
+                                </div>
+
+                                <!-- FSc path: Group / Major -->
+                                <div class="col-md-6 edu-fsc-field d-none">
+                                    <label for="fscGroup" class="form-label fw-semibold text-dark">FSc Group / Major <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="fscGroup" name="fscGroup">
+                                        <option value="" disabled selected>Select your group...</option>
+                                        <option value="Pre-Engineering">Pre-Engineering (Maths, Physics, Chemistry)</option>
+                                        <option value="Pre-Medical">Pre-Medical (Biology, Physics, Chemistry)</option>
+                                        <option value="ICS">ICS / Computer Science</option>
+                                        <option value="Commerce">Commerce / I.Com</option>
+                                        <option value="Arts">Arts / Humanities</option>
+                                        <option value="General Science">General Science</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your group.</div>
+                                </div>
+
+                                <!-- FSc path: Marks Header -->
+                                <div class="col-12 edu-fsc-field d-none">
+                                    <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-chart-column text-primary me-2"></i>FSc / Intermediate Percentage of Marks (if results are out)</h6>
+                                </div>
+
+                                <!-- FSc path: Overall Percentage -->
+                                <div class="col-md-4 edu-fsc-field d-none">
+                                    <label for="fscPercentage" class="form-label fw-semibold text-dark">Overall Percentage</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-percent text-secondary"></i></span>
+                                        <input type="number" class="form-control border-start-0 ps-0" id="fscPercentage" name="fscPercentage" placeholder="e.g. 80" min="0" max="100" step="0.1">
+                                    </div>
+                                </div>
+
+                                <!-- FSc path: Physics Marks -->
+                                <div class="col-md-2 edu-fsc-field d-none">
+                                    <label for="fscPhysics" class="form-label fw-semibold text-dark">Physics (%)</label>
+                                    <input type="number" class="form-control" id="fscPhysics" name="fscPhysics" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- FSc path: Chemistry Marks -->
+                                <div class="col-md-2 edu-fsc-field d-none">
+                                    <label for="fscChemistry" class="form-label fw-semibold text-dark">Chemistry (%)</label>
+                                    <input type="number" class="form-control" id="fscChemistry" name="fscChemistry" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- FSc path: Maths / CompSci / Biology Marks -->
+                                <div class="col-md-4 edu-fsc-field d-none">
+                                    <label for="fscOptionalSubject" class="form-label fw-semibold text-dark">Maths / CompSci / Biology (%)</label>
+                                    <input type="number" class="form-control" id="fscOptionalSubject" name="fscOptionalSubject" placeholder="Enter percentage (0-100)" min="0" max="100">
+                                    <div class="invalid-feedback">Please enter a valid percentage between 0 and 100.</div>
+                                </div>
+
+                                <!-- FSc path: Favourite Subject -->
+                                <div class="col-md-4 edu-fsc-field d-none">
+                                    <label for="fscFavSubject" class="form-label fw-semibold text-dark">Favourite Subject</label>
+                                    <select class="form-select" id="fscFavSubject" name="fscFavSubject">
+                                        <option value="" disabled selected>Select favourite subject...</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Maths">Maths</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                        <option value="Accounting">Accounting</option>
+                                        <option value="Economics">Economics</option>
+                                    </select>
+                                </div>
+
+                                <!-- FSc path: Strongest Subject -->
+                                <div class="col-md-4 edu-fsc-field d-none">
+                                    <label for="fscStrongestSubject" class="form-label fw-semibold text-dark">Strongest Subject</label>
+                                    <select class="form-select" id="fscStrongestSubject" name="fscStrongestSubject">
+                                        <option value="" disabled selected>Select your strongest subject...</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Maths">Maths</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                        <option value="Accounting">Accounting</option>
+                                        <option value="Economics">Economics</option>
+                                    </select>
+                                </div>
+
+                                <!-- FSc path: Subjects You Enjoy -->
+                                <div class="col-md-4 edu-fsc-field d-none">
+                                    <label for="fscSubjectsEnjoy" class="form-label fw-semibold text-dark">Subjects You Enjoy</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-heart text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="fscSubjectsEnjoy" name="fscSubjectsEnjoy" placeholder="e.g. Maths, Physics, Computer Science">
+                                    </div>
+                                </div>
+
+                                <!-- FSc path: Interests / Hobbies -->
+                                <div class="col-12 edu-fsc-field d-none">
+                                    <label for="fscInterests" class="form-label fw-semibold text-dark">Your Interests / Hobbies</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lightbulb text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="fscInterests" name="fscInterests" placeholder="e.g. Coding, reading about science, playing sports, drawing, business ideas">
+                                    </div>
+                                </div>
+
+                                <!-- FSc path: Work Type Preferences -->
+                                <div class="col-12 edu-fsc-field d-none">
+                                    <label class="form-label fw-semibold text-dark">What type of work do you like?</label>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Computers and technology" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-laptop-code text-primary me-2"></i>Computers and technology</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Engineering and machines" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-gears text-secondary me-2"></i>Engineering and machines</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Medicine and biology" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-heart-pulse text-danger me-2"></i>Medicine and biology</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Business and finance" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-chart-line text-success me-2"></i>Business and finance</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Arts and creativity" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-palette text-warning me-2"></i>Arts and creativity</span>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="custom-radio-card p-3 rounded-3 border bg-white d-flex align-items-center gap-3 w-100">
+                                                <input type="checkbox" name="fscWorkType" value="Teaching and helping people" class="form-check-input mt-0">
+                                                <span><i class="fa-solid fa-hand-holding-heart text-info me-2"></i>Teaching and helping people</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FSc path: Career Goal / Aim in Life -->
+                                <div class="col-12 edu-fsc-field d-none">
+                                    <label for="fscAimInLife" class="form-label fw-semibold text-dark">Career Goal / Aim in Life</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-star text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="fscAimInLife" name="fscAimInLife" placeholder="e.g. Become a software engineer, Doctor, Start my own business">
+                                    </div>
+                                </div>
+
+                                <!-- Bachelor's path: Engineering Field -->
+                                <div class="col-md-6 edu-bachelors-field d-none">
+                                    <label for="engineeringField" class="form-label fw-semibold text-dark">Engineering Field <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="engineeringField" name="engineeringField" onchange="onFieldChange()">
+                                        <option value="" disabled selected>Select your engineering field...</option>
+                                        <option value="Computer Engineering">Computer Engineering</option>
+                                        <option value="Software Engineering">Software Engineering</option>
+                                        <option value="Electrical Engineering">Electrical Engineering</option>
+                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                        <option value="Civil Engineering">Civil Engineering</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your engineering field.</div>
+                                </div>
+
+                                <!-- Education Level (Bachelor's path only) -->
+                                <div class="col-md-6 edu-bachelors-field d-none">
+                                    <label for="educationLevel" class="form-label fw-semibold text-dark">Education Level <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="educationLevel" name="educationLevel">
+                                        <option value="" disabled selected>Select highest education level...</option>
+                                        <option value="Undergraduate / Bachelor's">Undergraduate / Bachelor's (in progress or completed)</option>
+                                        <option value="Master's / Postgrad">Master's / Postgraduate</option>
+                                        <option value="PhD / Doctorate">PhD / Doctorate</option>
+                                        <option value="Bootcamp / Self-Taught">Bootcamp / Self-Taught</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your education level.</div>
+                                </div>
+
+                                <!-- Bachelor's path: Degree / Field of Study -->
+                                <div class="col-md-6 edu-bachelors-field d-none">
+                                    <label for="degreeField" class="form-label fw-semibold text-dark">Degree or Major / Field <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-graduation-cap text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="degreeField" name="degreeField" placeholder="e.g. BS Computer Science, BE Civil, MS Electrical Engineering">
+                                    </div>
+                                    <div class="invalid-feedback">Please provide your degree or field.</div>
+                                </div>
+
+                                <!-- Bachelor's path: Preferred Industry -->
+                                <div class="col-md-6 edu-bachelors-field d-none">
+                                    <label for="preferredIndustry" class="form-label fw-semibold text-dark">Preferred Industry / Field <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="preferredIndustry" name="preferredIndustry">
+                                        <option value="" disabled selected>First select your engineering field above...</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please choose your preferred industry.</div>
+                                </div>
+
+                                <!-- Experience Level (hidden for Matric) -->
+                                <div class="col-md-6 edu-non-matric-field">
+                                    <label for="experienceLevel" class="form-label fw-semibold text-dark">Experience Level <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="experienceLevel" name="experienceLevel">
+                                        <option value="" disabled selected>Select your current experience level...</option>
+                                        <option value="Beginner">Beginner (No prior work experience / Student)</option>
+                                        <option value="Intermediate">Intermediate (1-3 years / Internships / Projects)</option>
+                                        <option value="Advanced">Advanced (3+ years professional experience)</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select your experience level.</div>
+                                </div>
+
+                                <!-- Career Goal (hidden for Matric) -->
+                                <div class="col-12 edu-non-matric-field">
+                                    <label for="careerGoal" class="form-label fw-semibold text-dark">Primary Career Goal <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-bullseye text-secondary"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" id="careerGoal" name="careerGoal" placeholder="e.g. Become an AI/ML professional, Lead software teams, Launch tech startup">
+                                    </div>
+                                    <div class="invalid-feedback">Please specify your career goal.</div>
+                                </div>
+
+                                <!-- Current Skills (hidden for Matric) -->
+                                <div class="col-12 edu-non-matric-field">
+                                    <label class="form-label fw-semibold text-dark d-flex justify-content-between align-items-center">
+                                        <span>Current Skills <span class="text-danger">*</span> <small class="text-secondary fw-normal">(Add a skill, choose its level, then press Enter or click a skill below)</small></span>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary" id="skillCountBadge">0 skills added</span>
+                                    </label>
+                                    <div class="skill-input-container p-2 rounded-3 border bg-light d-flex flex-wrap align-items-center gap-2" id="skillTagBox">
+                                        <div id="activeSkillBadges" class="d-flex flex-wrap gap-2"></div>
+                                        <input type="text" class="form-control border-0 bg-transparent flex-grow-1 shadow-none" id="skillTextInput" placeholder="Type skill and press Enter..." style="min-width: 180px;">
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mt-2">
+                                        <label for="skillLevel" class="small text-secondary fw-semibold mb-0">Skill Level:</label>
+                                        <select class="form-select form-select-sm" id="skillLevel" style="max-width: 180px;">
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate">Intermediate</option>
+                                            <option value="Expert">Expert</option>
+                                        </select>
+                                    </div>
+                                    <div id="skillsValidationMsg" class="text-danger small mt-1 d-none">Please add at least one skill.</div>
+
+                                    <!-- Quick-add Popular Skills -->
+                                    <div class="mt-3">
+                                        <span class="text-secondary small fw-semibold me-2">Quick Add:</span>
+                                        <div class="d-inline-flex flex-wrap gap-1 mt-1" id="quickSkillButtons">
+                                            <span class="text-secondary small fst-italic">Select your engineering field first to see relevant skills</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold" onclick="goToStep(0)">
+                                    <i class="fa-solid fa-arrow-left me-1"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" onclick="goToStep(2)">
+                                    Next: Work Preferences <i class="fa-solid fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ================= STEP 2: CAREER INTEREST & WORK PREFERENCES ================= -->
+                        <div id="step2Container" class="form-step-section d-none">
+                            <div class="mb-4">
+                                <h4 class="fw-bold text-dark mb-1">Career Interest & Work Preference Assessment</h4>
+                                <p class="text-secondary small">Answer the AI-generated questions below. Each question adapts to your background and previous responses.</p>
+                            </div>
+
+                            <div class="questions-list d-flex flex-column gap-4" id="questionsWrapper"></div>
+                            <div id="dynamicQuestionsLoading" class="text-center py-4 d-none">
+                                <i class="fa-solid fa-spinner fa-spin text-primary me-2"></i> Generating your next personalized question...
+                            </div>
+
+                            <div id="step2ValidationMsg" class="alert alert-warning d-none mt-4" role="alert">
+                                <i class="fa-solid fa-triangle-exclamation me-2"></i> Please answer all 10 AI-generated questions to continue.
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-5">
+                                <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold" onclick="goToStep(1)">
+                                    <i class="fa-solid fa-arrow-left me-2"></i> Back
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold" onclick="goToStep(3)">
+                                    Review & Analyze <i class="fa-solid fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ================= STEP 3: PREVIEW PREFERENCE SCORES & SUBMIT ================= -->
+                        <div id="step3Container" class="form-step-section d-none">
+                            <div class="mb-4">
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-1 rounded-pill mb-1">Assessment Complete</span>
+                                <h4 class="fw-bold text-dark mb-1" id="step3ReviewTitle">Your Career Interest Profile</h4>
+                                <p class="text-secondary small" id="step3ReviewDescription">Below is the calculated preference distribution derived from your answers. Ready for AI Analysis!</p>
+                            </div>
+
+                            <!-- Non-diagnostic disclaimer alert -->
+                            <div class="alert alert-info border-info border-opacity-25 rounded-3 d-flex align-items-start gap-3 mb-4">
+                                <i class="fa-solid fa-circle-info fs-5 text-primary mt-1"></i>
+                                <div class="small">
+                                    <strong>Assessment Notice:</strong> These scores are <strong>NOT</strong> psychological or medical diagnoses. They represent your career and work preferences to guide AI matching.
+                                </div>
+                            </div>
+
+                            <!-- Visual Profile Scores (hidden for Matric path) -->
+                            <div class="row g-4 mb-4" id="step3VisualProfile">
+                                <div class="col-lg-6">
+                                    <div class="card border rounded-4 p-3 bg-light h-100">
+                                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-radar text-primary me-2"></i>Aptitude Radar</h6>
+                                        <div style="height: 280px;" class="position-relative">
+                                            <canvas id="step3RadarChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card border rounded-4 p-3 bg-white h-100">
+                                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-bar text-primary me-2"></i>Preference Distribution</h6>
+                                        <div class="d-flex flex-column gap-3" id="step3BarBreakdown">
+                                            <!-- Dynamically populated -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Matric-friendly preview message -->
+                            <div class="alert alert-success border-success border-opacity-25 rounded-3 d-none" id="matricPreviewMessage">
+                                <i class="fa-solid fa-graduation-cap me-2"></i>
+                                <strong>Great job!</strong> Your Matric profile is complete. The AI will recommend the best study path after Matric based on your subjects, marks, and interests.
+                            </div>
+
+                            <!-- FSc-friendly preview message -->
+                            <div class="alert alert-success border-success border-opacity-25 rounded-3 d-none" id="fscPreviewMessage">
+                                <i class="fa-solid fa-user-graduate me-2"></i>
+                                <strong>Great job!</strong> Your FSc / Intermediate profile is complete. The AI will recommend the best degree program for you based on your group, marks, and interests.
+                            </div>
+
+                            <!-- Generic Profile Summary Card (non-Matric) -->
+                            <div class="p-3 rounded-3 bg-light border mb-4" id="genericSummaryCard">
+                                <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-id-card text-secondary me-2"></i>Summary of Submitted Background</h6>
+                                <div class="row g-2 small text-secondary">
+                                    <div class="col-sm-6"><strong>Name:</strong> <span id="summaryName">-</span></div>
+                                    <div class="col-sm-6"><strong>Education:</strong> <span id="summaryEdu">-</span></div>
+                                    <div class="col-sm-6"><strong>Experience:</strong> <span id="summaryExp">-</span></div>
+                                    <div class="col-sm-6"><strong>Industry:</strong> <span id="summaryInd">-</span></div>
+                                    <div class="col-12"><strong>Goal:</strong> <span id="summaryGoal">-</span></div>
+                                    <div class="col-12"><strong>Skills:</strong> <span id="summarySkills">-</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Matric Student Profile Summary Card -->
+                            <div class="p-3 rounded-3 bg-light border mb-4 d-none" id="matricSummaryCard">
+                                <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-id-card text-secondary me-2"></i>Student Profile Summary</h6>
+                                <div class="row g-2 small text-secondary">
+                                    <div class="col-sm-6"><strong>Name:</strong> <span id="matricSummaryName">-</span></div>
+                                    <div class="col-sm-6"><strong>Matric Group:</strong> <span id="matricSummaryGroup">-</span></div>
+                                    <div class="col-sm-6"><strong>Marks / Percentage:</strong> <span id="matricSummaryMarks">-</span></div>
+                                    <div class="col-sm-6"><strong>Favourite Subject:</strong> <span id="matricSummaryFav">-</span></div>
+                                    <div class="col-sm-6"><strong>Strongest Subject:</strong> <span id="matricSummaryStrongest">-</span></div>
+                                    <div class="col-12"><strong>Interests:</strong> <span id="matricSummaryInterests">-</span></div>
+                                </div>
+                            </div>
+
+                            <!-- FSc Student Profile Summary Card -->
+                            <div class="p-3 rounded-3 bg-light border mb-4 d-none" id="fscSummaryCard">
+                                <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-id-card text-secondary me-2"></i>FSc / Intermediate Profile Summary</h6>
+                                <div class="row g-2 small text-secondary">
+                                    <div class="col-sm-6"><strong>Name:</strong> <span id="fscSummaryName">-</span></div>
+                                    <div class="col-sm-6"><strong>College:</strong> <span id="fscSummaryCollege">-</span></div>
+                                    <div class="col-sm-6"><strong>FSc Group:</strong> <span id="fscSummaryGroup">-</span></div>
+                                    <div class="col-sm-6"><strong>Marks / Percentage:</strong> <span id="fscSummaryMarks">-</span></div>
+                                    <div class="col-sm-6"><strong>Favourite Subject:</strong> <span id="fscSummaryFav">-</span></div>
+                                    <div class="col-sm-6"><strong>Strongest Subject:</strong> <span id="fscSummaryStrongest">-</span></div>
+                                    <div class="col-12"><strong>Interests:</strong> <span id="fscSummaryInterests">-</span></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-5">
+                                <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold" onclick="goToStep(2)">
+                                    <i class="fa-solid fa-arrow-left me-2"></i> Modify Answers
+                                </button>
+                                <button type="button" class="btn btn-primary btn-glow btn-lg rounded-pill px-5 fw-bold" id="submitBtn" onclick="submitForAIAnalysis()">
+                                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Generate AI Career Recommendations
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= AI LOADING OVERLAY (SECTION 18) ================= -->
+<div id="aiLoadingOverlay" class="loading-overlay d-none">
+    <div class="loading-modal-card text-center p-5 rounded-4 shadow-lg bg-dark text-white border border-white border-opacity-10 max-w-500">
+        <div class="loading-pulse-ring mx-auto mb-4">
+            <i class="fa-solid fa-compass fa-spin fa-2xl text-gradient"></i>
+        </div>
+        
+        <h4 class="fw-bold text-white mb-2" id="loadingStageTitle">Analyzing your profile...</h4>
+        <p class="text-secondary small mb-4" id="loadingStageSubtitle">Processing education, skillsets, and work preferences</p>
+        
+        <!-- Animated Progress Meter -->
+        <div class="progress progress-glow mb-4" style="height: 10px;">
+            <div class="progress-bar bg-gradient-primary progress-bar-striped progress-bar-animated" id="loadingProgressBar" style="width: 15%;"></div>
+        </div>
+
+        <!-- Sequential Checklist -->
+        <div class="d-flex flex-column gap-2 text-start small text-secondary">
+            <div class="d-flex align-items-center gap-2" id="loadingItem1">
+                <i class="fa-solid fa-spinner fa-spin text-info loading-item-icon"></i>
+                <span class="loading-item-text text-white">Analyzing your profile...</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 text-opacity-50" id="loadingItem2">
+                <i class="fa-regular fa-circle loading-item-icon"></i>
+                <span class="loading-item-text">Matching your interests and skills...</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 text-opacity-50" id="loadingItem3">
+                <i class="fa-regular fa-circle loading-item-icon"></i>
+                <span class="loading-item-text">Building your personalized career roadmap...</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
